@@ -1,3 +1,4 @@
+
 /*
    hw2.c
 
@@ -19,6 +20,7 @@
 
 
 int globalMessageNum = 1;
+int currentMessageNum = 1;
 
 
 int main( void )
@@ -27,6 +29,7 @@ int main( void )
   MsgNode *node;
   char command[MAX_LINE];
   char c;
+  int i = 1;
 
   printPrompt();
 
@@ -48,7 +51,6 @@ int main( void )
       // INSERT CODE FOR JUMPING TO MESSAGE k
     }
     else switch( c ) {
-	int i = 1;
     case 'a': case 'A': // Add item
       // MODIFY THIS CODE, AS APPROPRIATE
       list = add_to_tail( node = getNode(), list ); //creates new node, stores in 'node' and then returns the head of the linked list to 'list'
@@ -57,17 +59,21 @@ int main( void )
 	case 'l': case 'L':
 		node = list;
 		if (list != NULL) {
-			while (node->messageNum < globalMessageNum-1) {
-				printf("  %2d ", node->messageNum);
-				printBrief(node);
+			while (i < globalMessageNum)  {
+				if ((node->messageNum == currentMessageNum-1) && globalMessageNum >1) {
+					printf("->%2d ",node->messageNum);
+					printBrief(node);
+				}
+				else {
+					printf("  %2d ", node->messageNum);
+					printBrief(node);
+				}
+				if (node->next != NULL) {
 				node = node->next;
-				//printf("test");
+				}
 				i++;
 			}
-			if ((node->messageNum == globalMessageNum-1) && globalMessageNum >1) {
-				printf("->%2d ",node->messageNum);
-				printBrief(node);
-			}
+
 		}
 		break;
 	case 'p': case 'P':
@@ -145,6 +151,7 @@ MsgNode * getNode( void )
      exit( 1 );
   }
   new_node->messageNum= globalMessageNum++;
+  currentMessageNum = globalMessageNum;
   new_node->inReplyTo = 0;
   new_node->indent    = 0;
   new_node->deleted   = FALSE;
@@ -297,11 +304,34 @@ int scanTime( Time *t )
 /************************************************************
    Return TRUE if date is valid; FALSE otherwise.
 */
-int dateOK( Date *d )
-{
-  // INSERT CODE HERE
+int dateOK( Date *d ) {
+	
+  if (d->month == 2 && (d->year)%4 == 0) {
+    return(   d->day   > 0 && d->day   <= 29
+           && d->month > 0 && d->month <= 12
+           && d->year >= 1582 );
+  }
+  else if (d->month == 2) {
+    return(   d->day   > 0 && d->day   <= 28
+           && d->month > 0 && d->month <= 12
+           && d->year >= 1582 );
+  }
+  else if (d->month == 1 || d->month == 3 || d->month == 5 || d->month == 7 || d->month == 8 || d->month == 10 || d->month == 12) {
+  return(   d->day   > 0 && d->day   <= 31
+         && d->month > 0 && d->month <= 12
+         && d->year >= 1582 );
+  }
+  else if(d->month == 4 || d->month == 6 || d->month == 9 || d->month == 11) {
+    return(   d->day   > 0 && d->day   <= 30
+           && d->month > 0 && d->month <= 12
+           && d->year >= 1582 );
+  }
+    
+  else {
+  return FALSE;
+  }
 
-  return TRUE;
+
 }
 
 /************************************************************
@@ -426,3 +456,4 @@ MsgNode * add_to_tail( MsgNode *new_node, MsgNode *head)
 	}
 	return( head );
 }
+
