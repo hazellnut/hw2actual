@@ -18,6 +18,7 @@
 typedef struct date    Date;
 typedef struct time    Time;
 typedef struct msgNode MsgNode;
+typedef struct undo    Undo;
 
 struct date {
   int day;
@@ -32,6 +33,7 @@ struct time {
 };
 
 struct msgNode {
+  int   found;
   int   messageNum;
   int   inReplyTo;
   int   indent;
@@ -43,8 +45,27 @@ struct msgNode {
   MsgNode *next;
 };
 
+struct undo {
+	MsgNode *list;
+	int printCase;
+	MsgNode *replynode;
+	int isReply;
+	int listCase;
+	int currentMessageNum;
+	int globalMessageNum;
+};
+	
+
 // INSERT NEW FUNCTION PROTOTYPES, AS APPROPRIATE
-void new_message(MsgNode *list, MsgNode *node);
+char* getSearch(void);
+MsgNode * getSearchNode( MsgNode *node );
+void search(MsgNode * list);
+void overallPrintArgument (int printCase, MsgNode *list);
+void printThread( MsgNode *list );
+MsgNode *getReply( MsgNode *list, MsgNode *node );
+void insertNode( MsgNode *list );
+MsgNode *currentNode( MsgNode *head );
+void actualPrintBrief( MsgNode* list);
 MsgNode * add_to_tail( MsgNode *new_node, MsgNode *head);
 void printPrompt();
 void   printHelp();

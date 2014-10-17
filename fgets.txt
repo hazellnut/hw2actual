@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int main(void) {
+
+char char[256];
+fgets(char, 256, stdin);
+
+printf("%s", char);
+
+return 0;
+}
