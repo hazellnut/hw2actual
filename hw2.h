@@ -57,7 +57,7 @@ struct undo {
 	
 
 // INSERT NEW FUNCTION PROTOTYPES, AS APPROPRIATE
-char* getSearch(void);
+char* getSearch(char searchText[256]);
 MsgNode * getSearchNode( MsgNode *node );
 void search(MsgNode * list);
 void overallPrintArgument (int printCase, MsgNode *list);

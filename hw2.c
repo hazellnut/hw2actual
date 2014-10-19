@@ -122,7 +122,7 @@ int main( void )
 		break;
 			
 	case 'r': case 'R':
-		if ((list != NULL) && (currentNode(list)->next != NULL)){
+		if (list != NULL) {//&& (currentNode(list)->next != NULL)){
 		storage1.isReply = 1;
 		storage1.replynode = currentNode(list)->next;
 		insertNode( list );
@@ -232,8 +232,8 @@ MsgNode * getNode( void )
   new_node->indent    = 0;
   new_node->deleted   = FALSE;
   new_node->name      = getName();
-  //getDate( &new_node->date );
-  //getTime( &new_node->time );
+  getDate( &new_node->date );
+  getTime( &new_node->time );
   new_node->text      = getText();
   new_node->next      = NULL;
 
@@ -619,11 +619,9 @@ MsgNode *getReply( MsgNode *list , MsgNode *node)
 void insertNode( MsgNode *list ){
 	MsgNode *node = currentNode( list );
 	MsgNode *tempPointer = currentNode( list );
-	//printf("start");
 	while ((tempPointer->next != NULL) && (tempPointer->next->indent > node->indent)) {
 		tempPointer = tempPointer->next;
 	}
-	//printf("finish");
 	node= tempPointer;
 	node->next = getReply( list , node );
 }
@@ -645,37 +643,47 @@ void printThread( MsgNode *list ){
 }
 		
 void search(MsgNode * list) {
-	MsgNode *node = (MsgNode *)malloc(sizeof(MsgNode));
+	MsgNode* node;
 	node = list;
-	char* searchText = getSearch();
-	printf("test3");
+	char search[256] = {0};
+	getSearch(search);
 	while (node != NULL) {
-		MsgNode* new_node = getSearchNode(node);
-		char* text = node->text;
-		int i,j,k;
+		MsgNode* new_node; 
+		new_node = getSearchNode(node);
+		char *text = NULL;
+		text = node->text;
+		int i,j,k,l;
 		j=0;
-		printf("test4");
-		while (j < strlen(text) - strlen(searchText)) {
-			char* string = NULL;
-			printf("test5");
-			for (k=0;k< strlen(searchText); k++) {
-				int l = j;
+		int text_str = strlen(text);
+		int search_str = strlen(search);
+		while (j < text_str - search_str +1) {
+			char string[256] = {0};
+			for (k = 0; k < search_str; k++) {
+				l = j;
 				string[k] = text[l+k];
 			}
-			char* temp = strcasestr(string, searchText);
+			char* temp = strcasestr(string, search);
 			i = 0;
-			
+			int string_str = strlen(string);
 			if (temp != NULL) {
-				while( i< strlen(string)) {
+				while( i< string_str) {
 					new_node->text[j] = toupper(string[i]);
 					new_node->found = 1;
-					j++;
 					i++;
+					j++;
 				}
-				printf("test6");
 			}
 			else {
+				if ( j == text_str - search_str) {
+					while( i< string_str) {
+						new_node->text[j] = string[i];
+						i++;
+						j++;
+					}
+				}
+				else {
 				new_node->text[j] = string[i];
+				}
 				j++;
 			}
 		}
@@ -683,10 +691,13 @@ void search(MsgNode * list) {
 			printf("\n");
 			printFull(new_node);
 			printf("\n");
+			//free(new_node->text);
 			free(new_node);
 		}
 		node = node->next;
 	}
+	//free(node);
+	
 }
 	
 MsgNode * getSearchNode( MsgNode *node )
@@ -705,28 +716,22 @@ MsgNode * getSearchNode( MsgNode *node )
 	new_node->name      = node->name;
 	new_node->date	    = node->date;
 	new_node->time      = node->time;
-	new_node->text      = node->text;
+	new_node->text 	    = (char *)malloc(sizeof(node->text));
 	new_node->next      = NULL;
-
+	
 	return( new_node );
 }	
 		
-char* getSearch(void) {
-	char searchText[256];
-	printf("test1\n");
+char* getSearch(char searchText[256]) {
 	printf("Search text: ");
 	fflush(stdout);
 	fgets(searchText, 256, stdin);
-	printf("test2");
-	int i;
-	for (i=0; searchText[i] != '\0'; i++) {
-		if (searchText[i] == '\n') {
-			searchText[i] = '\0';
-			i--;
-		}
-	}	
-	char *search = searchText;
-	return (search);
+	int str_len = strlen(searchText);
+	if ((str_len > 0) && (searchText[str_len -1] == '\n')) {
+		searchText[str_len -1] = '\0';
+	}
+
+	return (searchText);
 }	
 
 

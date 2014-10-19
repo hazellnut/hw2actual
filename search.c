@@ -4,32 +4,22 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-int main(void) {
-	char searchText[256] ;
-
-	
-	char* test = "hello, this is a this test sample";
+char* getSearch(char searchText[256]) {
+	printf("test1\n");
 	printf("Search text: ");
 	fflush(stdout);
 	fgets(searchText, 256, stdin);
+	//printf("test2\n");
 	int i;
-	for (i=0; i< strlen(searchText); i++) {
+	for (i=0; i < strlen(searchText); i++) {
+		printf("test3");
 		if (searchText[i] == '\n') {
 			searchText[i] = '\0';
+			i--;
 		}
 	}
-	
-	while (i < strlen(test) - strlen(searchText)){
-		for  
-		
-		char* temp = strcasestr(test, searchText);
-		if (temp != NULL) {
-			printf("%s\n", temp);
-			test = test + (strlen(test) - strlen(temp) + strlen(searchText));
-		}
-		else {
-		test++;
-		}
-	}	 
-	return 0;
+	printf("done");
+	printf("%s", searchText);
+	return (searchText);
+}	
 }
